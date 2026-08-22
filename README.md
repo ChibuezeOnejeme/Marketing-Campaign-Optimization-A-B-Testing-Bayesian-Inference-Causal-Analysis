@@ -3,8 +3,8 @@
 A portfolio project by a Marketing Data Analyst, built on a synthetic (mock) marketing dataset. It walks through a full analytics workflow — from cleaning raw campaign data to testing which channels actually work — and ends with clear, plain-English recommendations a marketing team could act on.
 
 Two versions of the analysis are included:
-- **`marketing_analytics_project_final_notebook.ipynb`** — the core analysis (EDA, cleaning, cohort analysis, A/B testing, causal inference).
-- **`marketing_analytics_project_with_ML.ipynb`** — everything above, plus a predictive modeling section that forecasts which campaigns are likely to convert.
+- **`marketing_analytics_project_final_main.ipynb`** — the core analysis (EDA, cleaning, cohort analysis, A/B testing, causal inference).
+- **`marketing_analytics_project_with_MLearn.ipynb`** — everything above, plus a predictive modeling section that forecasts which campaigns are likely to convert.
 
 ---
 
@@ -167,13 +167,9 @@ The ML version of the notebook takes this a step further: instead of only explai
 ## 📁 Repository Structure
 
 ```
-├── marketing_analytics_project_final_notebook.ipynb   # Core analysis: EDA, cleaning, cohort, A/B testing, causal inference
-├── marketing_analytics_project_with_ML.ipynb           # Core analysis + predictive modeling (ML)
+├── marketing_analytics_project_final_main.ipynb   # Core analysis: EDA, cleaning, cohort, A/B testing, causal inference
+├── marketing_analytics_project_with_MLearn.ipynb           # Core analysis + predictive modeling (ML)
 └── README.md
 ```
 
 ---
-
-## 👋 About This Project
-
-This is a self-directed portfolio project designed to demonstrate an end-to-end marketing analytics workflow — the same kind of question a real marketing team asks ("where should we spend our budget?"), answered with the rigor of proper statistical testing rather than gut instinct. Feedback and suggestions are welcome.
