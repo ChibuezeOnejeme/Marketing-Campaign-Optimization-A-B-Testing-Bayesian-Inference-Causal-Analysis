@@ -1,2 +1,179 @@
-# Marketing-Campaign-Optimization-A-B-Testing-Bayesian-Inference-Causal-Analysis
-End-to-end marketing analytics project — EDA, frequentist &amp; Bayesian A/B testing, causal inference (propensity score matching), and predictive modeling to identify which channels, segments, and campaigns actually drive ROI.
+# 📊 Marketing Campaign Performance & Optimization
+
+A portfolio project by a Marketing Data Analyst, built on a synthetic (mock) marketing dataset. It walks through a full analytics workflow — from cleaning raw campaign data to testing which channels actually work — and ends with clear, plain-English recommendations a marketing team could act on.
+
+Two versions of the analysis are included:
+- **`marketing_analytics_project_final_notebook.ipynb`** — the core analysis (EDA, cleaning, cohort analysis, A/B testing, causal inference).
+- **`marketing_analytics_project_with_ML.ipynb`** — everything above, plus a predictive modeling section that forecasts which campaigns are likely to convert.
+
+---
+
+## 🎯 What This Project Is About
+
+Marketing teams run campaigns across many channels — Email, Social Media, Search, Display Ads, SMS — targeting different audience segments like Students, Young Adults, Professionals, and Retirees. The problem is that not every channel works equally well for every audience, and it's easy to keep spending on a campaign just because it "feels" like it's working.
+
+This project answers a simple but important question:
+
+> **"Which campaigns, channels, and audience segments are actually driving results — and which ones should we stop funding?"**
+
+To answer that credibly, the analysis doesn't just look at raw numbers. It uses three different statistical lenses on the same question, so the conclusions aren't resting on a single method:
+
+1. **Descriptive analysis** — what does the data show at a glance?
+2. **A/B testing (two ways)** — is one channel *really* better than another, or could the difference be random noise?
+3. **Causal inference** — did a specific campaign *cause* people to spend more, or would they have spent that money anyway?
+
+---
+
+## ❓ Business Questions Answered
+
+- Which marketing channels and campaigns perform best overall?
+- Which customer segment converts at the highest rate?
+- Which channel-segment combinations should get more budget, and which should be paused?
+- Do a traditional statistical test and a probability-based (Bayesian) test agree on which channel wins? What does it mean if they don't?
+- Which individual campaigns are actually causing extra customer spend, versus just riding along with users who would have spent money anyway?
+
+---
+
+## 🗂️ About the Data
+
+The dataset is **synthetic** (created for practice, not real customer data) and contains ~50,000 rows of campaign-level activity, including:
+
+| Column type | Examples |
+|---|---|
+| Campaign details | `Campaign_ID`, `Channel`, `Group` (control/treatment) |
+| Audience info | `Segment`, `Region`, `Device`, `Gender` |
+| Performance metrics | `Impressions`, `Clicks`, `CTR`, `Conversions`, `Conversion_Rate`, `Spend_USD`, `CPC`, `CPA` |
+| Timing | `Date`, `First_Seen_Date` |
+
+---
+
+## 🧭 How the Analysis Is Structured
+
+The notebook is organized as a logical story — each section builds on the last. Here's what happens at each stage, explained in plain terms.
+
+### 1. Data Cleaning & Preparation
+Before trusting any insight, the data has to be trustworthy. This step:
+- Converts date columns into a proper date format so they can be sorted and grouped by month.
+- Checks for missing values and fills them in using column averages, so no rows get dropped unnecessarily.
+- Finds and caps **outliers** (extreme values, like one campaign somehow generating 100x normal spend) using the IQR method, so a handful of freak data points don't distort the averages.
+- Fixes inconsistent labels — for example, "Yung Adults" is corrected to "Young Adults," and "email" is standardized to "Email," so the same category isn't accidentally split into two.
+
+**Why it matters:** messy labels and unhandled outliers are one of the most common ways marketing dashboards mislead people. Fixing this first means every chart and test after this point can be trusted.
+
+### 2. Exploratory Data Analysis (EDA)
+This is the "get to know the data" step. It includes:
+- Distribution charts for key metrics (spend, clicks, conversion rate, cost per click, cost per acquisition) to spot skew or unusual patterns.
+- Breakdown charts showing how many records fall into each channel, region, segment, and device.
+- A correlation heatmap to see which metrics move together (for example, do higher impressions reliably lead to more clicks?).
+- Box plots comparing performance metrics like CTR and conversion rate across channels, to get a first visual read on which channels look strongest before running any formal test.
+
+**Why it matters:** this is where a first hypothesis forms — e.g., "Search looks like it converts best" — which the later statistical tests will either confirm or challenge.
+
+### 3. Cohort Analysis
+Users are grouped into **cohorts** based on the month they first appeared in the data (their "first seen" month). The analysis then tracks:
+- Total spend generated by each monthly cohort.
+- Average spend per user within each cohort.
+
+**Why it matters:** this reveals whether certain months brought in higher-value customers — useful for spotting seasonal campaigns or acquisition pushes worth repeating.
+
+### 4. A/B Testing — Two Approaches, Explained Side by Side
+
+A/B testing compares two (or more) versions of something — in this case, different marketing channels or campaign variants — to see which one truly performs better, rather than assuming a difference is real just because the numbers aren't identical.
+
+This project runs the test **two different ways** on purpose, because they answer slightly different questions:
+
+**Frequentist A/B Testing (the traditional method)**
+- Asks: *"If there were truly no difference between these two channels, how likely is it that I'd see a gap this big just by chance?"*
+- Produces a **p-value**. A small p-value (typically below 0.05) means the gap is unlikely to be random luck.
+- Good for: clear-cut, rule-based decisions ("statistically significant" vs. not).
+- Limitation: a p-value doesn't tell you *how much better* one option is, or how confident to be in a business sense — only whether the difference is likely non-random.
+
+**Bayesian A/B Testing (the probability-based method)**
+- Asks a more intuitive business question: *"Given the data, what's the probability that Channel B is actually better than Channel A?"*
+- Produces a direct probability, e.g., *"There's a 78% chance Social Media converts better than Display Ads for Young Adults."*
+- Good for: decision-making, communicating confidence to stakeholders in plain language, and revisiting results as more data comes in.
+- Limitation: slightly more complex to set up, and results can be sensitive to the starting assumptions (called "priors").
+
+**Why run both?** They can disagree — and when they do, that disagreement is itself useful information. A result that's "statistically significant" under the frequentist test but shows only a 55% Bayesian probability of being better suggests the effect might be real but small, so it's worth testing further before reallocating a large budget.
+
+### 5. Causal Inference (Campaign-Level Impact)
+A/B testing compares channels overall, but this section goes one level deeper: **did a specific campaign actually cause customers to spend more?**
+
+This matters because simply comparing "people who saw Campaign 3" to "people who didn't" can be misleading — those two groups might be different kinds of customers to begin with (different regions, segments, or channels), and that difference — not the campaign — could explain a spending gap.
+
+To correct for this, the project uses **propensity score matching**: it mathematically pairs up customers who look similar on key traits (region, segment, channel) but differ in whether they were exposed to a given campaign. Comparing spend *within these matched pairs* gives a much more honest estimate of the campaign's true effect — known as the **Average Treatment Effect on the Treated (ATT)**.
+
+**Why it matters:** this is the difference between "Campaign 3's customers spent more" (which could be a coincidence) and "Campaign 3 caused customers to spend more" (which justifies increasing its budget).
+
+### 6. Predictive Modeling *(ML notebook only)*
+The ML version of the notebook takes this a step further: instead of only explaining what happened, it builds a model to **predict which future campaign activity is likely to convert.**
+- A binary target is created: "High Conversion" (above the median conversion count) vs. "Low Conversion."
+- Three models are trained and compared: **Logistic Regression** (a simple, interpretable baseline), **Random Forest**, and **Gradient Boosting** (more powerful models that can capture non-linear patterns).
+- Models are evaluated using accuracy and ROC-AUC, and compared side by side to see which approach generalizes best.
+
+**Why it matters:** this shifts the project from "here's what worked in the past" to "here's a tool that could flag likely high- or low-performing campaigns before they launch."
+
+---
+
+## 💡 Key Findings
+
+| Area | Finding |
+|---|---|
+| **Email** | Consistently the strongest channel for the **Retirees** segment |
+| **Display Ads** | Performs best for the **Young Adults** segment |
+| **Social Media** | Underperforms across most segments, but shows promise for **Professionals** |
+| **Search** | Broadly strong, especially for **Professionals** and **Retirees** |
+| **Campaign causal impact** | Campaigns 2 and 3 showed genuinely positive causal lift on spend; Campaigns 1, 4, and 6 showed a negative causal effect |
+| **Frequentist vs. Bayesian** | The two methods largely agreed on direction, but Bayesian results better highlighted where the evidence was actually weak (e.g., Students segment, where no channel had a clear edge) |
+
+---
+
+## ✅ Business Recommendations
+
+**1. Tailor channel strategy by audience segment, not a one-size-fits-all plan**
+- Prioritize Email for Retirees, especially with personalized offers.
+- Shift more acquisition budget to Display Ads for Young Adults.
+- Test Social Media more deliberately with Professionals, focused on career/finance-related content.
+
+**2. Act on the causal inference results, not just raw averages**
+- Pause or redesign Campaigns 1, 4, and 6 — their negative causal effect suggests the spend isn't translating into real incremental value.
+- Scale up Campaigns 2 and 3, which show a genuine positive causal lift on customer spend.
+
+**3. Re-engage high-value acquisition cohorts**
+- Certain months brought in higher-spending customers. Identify what channel/offer mix was used then and revisit it for future campaigns or loyalty pushes.
+
+**4. Keep testing continuously, not just once**
+- Run ongoing Bayesian A/B tests by segment so budget can shift as new data comes in, rather than relying on a single point-in-time test.
+
+**5. Natural next steps for deeper analysis**
+- Retention cohort analysis — how long each segment stays engaged after acquisition.
+- Customer Lifetime Value (CLV) modeling to prioritize high-value customers in acquisition targeting.
+- Multi-touch attribution to understand how channels work together rather than in isolation.
+
+---
+
+## 🛠️ Tools & Technologies
+
+- **Python** — Pandas, NumPy (data handling)
+- **Matplotlib, Seaborn** — visualization
+- **SciPy, statsmodels** — frequentist A/B testing (t-tests, multiple testing correction)
+- **Custom Beta-distribution model** — Bayesian A/B testing
+- **scikit-learn** — propensity score matching (causal inference) and predictive modeling (Logistic Regression, Random Forest, Gradient Boosting)
+- **Jupyter Notebook**
+- **GitHub** — version control and portfolio hosting
+
+---
+
+## 📁 Repository Structure
+
+```
+├── marketing_analytics_project_final_notebook.ipynb   # Core analysis: EDA, cleaning, cohort, A/B testing, causal inference
+├── marketing_analytics_project_with_ML.ipynb           # Core analysis + predictive modeling (ML)
+└── README.md
+```
+
+---
+
+## 👋 About This Project
+
+This is a self-directed portfolio project designed to demonstrate an end-to-end marketing analytics workflow — the same kind of question a real marketing team asks ("where should we spend our budget?"), answered with the rigor of proper statistical testing rather than gut instinct. Feedback and suggestions are welcome.
